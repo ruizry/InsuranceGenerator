@@ -160,6 +160,7 @@
     <Compile Include="Car.cs">
       <DependentUpon>Insurance.tt</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -189,6 +190,9 @@
     <Compile Include="User.cs">
       <DependentUpon>Insurance.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\AdminViewModel.cs" />
+    <Compile Include="ViewModels\CarViewModel.cs" />
+    <Compile Include="ViewModels\LookupViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -287,6 +291,10 @@
     <Content Include="Views\Home\AccountError.cshtml" />
     <Content Include="Views\Home\YearError.cshtml" />
     <Content Include="Views\Home\AgeError.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Home\Details.cshtml" />
+    <Content Include="Views\Home\NoAccountError.cshtml" />
+    <Content Include="Views\Home\LookupRate.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

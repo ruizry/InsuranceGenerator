@@ -4,10 +4,10 @@
     <EntitySetMapping Name="Cars">
       <EntityTypeMapping TypeName="InsuranceModel.Car">
         <MappingFragment StoreEntitySet="Cars">
+          <ScalarProperty Name="Year" ColumnName="Year" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Make" ColumnName="Make" />
           <ScalarProperty Name="Model" ColumnName="Model" />
-          <ScalarProperty Name="Year" ColumnName="Year" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="QuoteId" ColumnName="QuoteId" />
         </MappingFragment>
@@ -35,6 +35,8 @@
     <EntitySetMapping Name="Users">
       <EntityTypeMapping TypeName="InsuranceModel.User">
         <MappingFragment StoreEntitySet="Users">
+          <ScalarProperty Name="CompleteQuote" ColumnName="CompleteQuote" />
+          <ScalarProperty Name="DuiActive" ColumnName="DuiActive" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="FirstName" ColumnName="FirstName" />
           <ScalarProperty Name="LastName" ColumnName="LastName" />

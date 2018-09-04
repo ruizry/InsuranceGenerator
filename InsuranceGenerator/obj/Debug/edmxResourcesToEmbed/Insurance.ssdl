@@ -7,9 +7,9 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="Make" Type="varchar" MaxLength="25" />
     <Property Name="Model" Type="varchar" MaxLength="50" />
-    <Property Name="Year" Type="datetime" />
     <Property Name="UserId" Type="int" Nullable="false" />
     <Property Name="QuoteId" Type="int" Nullable="false" />
+    <Property Name="Year" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Quotes">
     <Key>
@@ -38,6 +38,8 @@
     <Property Name="Email" Type="varchar" MaxLength="50" Nullable="false" />
     <Property Name="DateOfBirth" Type="datetime" Nullable="false" />
     <Property Name="DuiIssued" Type="datetime" />
+    <Property Name="DuiActive" Type="int" Nullable="false" />
+    <Property Name="CompleteQuote" Type="decimal" Precision="18" Scale="2" />
   </EntityType>
   <Association Name="FK_Cars_Quotes">
     <End Role="Quotes" Type="Self.Quotes" Multiplicity="1">

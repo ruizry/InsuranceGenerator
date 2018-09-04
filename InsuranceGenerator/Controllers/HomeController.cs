@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InsuranceGenerator.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -9,6 +10,11 @@ namespace InsuranceGenerator.Controllers
     public class HomeController : Controller
     {
         public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult Details()
         {
             return View();
         }
@@ -79,61 +85,63 @@ namespace InsuranceGenerator.Controllers
                 }
                 else
                 {
+                    //create user and add to db
                     var tempUser = new User();
-                    tempUser.FirstName = firstName;
-                    tempUser.LastName = lastName;
-                    tempUser.Email = email;
+                    tempUser.FirstName = firstName.ToLower();
+                    tempUser.LastName = lastName.ToLower();
+                    tempUser.Email = email.ToLower();
                     tempUser.DateOfBirth = DateOfBirth;
                     tempUser.DuiActive = DuiActive;
                     if (duiToggle == 1)
                     {
                         tempUser.DuiIssued = (DuiCheck) ? Dui : DateTime.Now;
-                    }            
+                    }
                     else tempUser.DuiIssued = null;
-
 
                     db.Users.Add(tempUser);
                     db.SaveChanges();
 
-                    var currentuser = Users.Where(x => x.Email == email).First();
-
+                    //create all tickets and add to db
                     for (int i = 0; i < ticketToggle; i++)
                     {
                         var tempTicket = new Ticket();
                         tempTicket.IssueDate = (TicketCheck[i]) ? Ticket[i] : DateTime.Now;
-                        tempTicket.UserId = currentuser.Id;
+                        tempTicket.UserId = tempUser.Id;
                         db.Tickets.Add(tempTicket);
                     }
                     db.SaveChanges();
 
-                    //use the next 3 lines in calquote and take out here
-                    var Tickets = db.Tickets;  // remove this
-                    var userTickets = db.Tickets.Where(x => x.UserId == currentuser.Id).ToList();
-                    int Points = userTickets.Count(x => (DateTime.Now - x.IssueDate).Days <= 1095);
+                    //Create quotes and cars and add to db
+                    AddQuoteAndCar(tempUser, make1, model1, Year1Value, coverage1);
+                    if ((make2 != null) && (make2 != "")) AddQuoteAndCar(tempUser, make2, model2, Year2Value, coverage2);
+                    if ((make3 != null) && (make3 != "")) AddQuoteAndCar(tempUser, make3, model3, Year3Value, coverage3);
 
-                    //create temp car object here
-                    var tempCar = new Car();
-                    tempCar.Make = make1;
-                    tempCar.Model = model1;
-                    tempCar.Year = Year1Value;
+                    var cars = from c in db.Cars
+                               where c.UserId == tempUser.Id
+                               select c;
 
+                    decimal totalrate = 0.0m;
+                    foreach (var car in cars)
+                    {
+                        var quote = from q in db.Quotes
+                                    where q.Id == car.QuoteId
+                                    select q;
 
-                    //pass in user and car
-                    decimal rate1 = CalcCarQuote(currentuser, tempCar, coverage1);
+                        totalrate += (decimal)(quote.FirstOrDefault().Rate);
+                    }
 
-                    //make quote object here using rate1, add quote to db and save
-                    
-                    //finish building tempCar with references, add car to db and save
+                    //Add total quote column for user and save to db
+                    if (cars.Count() == 1) tempUser.CompleteQuote = totalrate;
+                    else tempUser.CompleteQuote = totalrate * (decimal)(1.00 - (.05 * (cars.Count() - 1)));
+                    db.SaveChanges();
 
-                    //repeat the following 3 steps for car 2 if carToggle > 1 AND make2 has a value
-                    //repeat the 3 steps for car 3 if carToggle > 2 AND make3 has a value
+                    //return Content("Test " + age + " " + " " + coverage1 + " " + cars.Count() + " " + totalrate + " " + tempUser.CompleteQuote);
 
-                    //calc total quote by passing email to totalquote method, this will return deciaml, it will retrieve all cars referenced
-                    //set TotalRate in user to this rate, edit entry in table and save db
-
-
-                    return Content("Test " + age + " " + Points + " " + coverage1);
-                    //return View("Success");
+                    //Display Policy Details
+                    return RedirectToAction("LookupRate", new
+                    {
+                        lookupEmail = tempUser.Email
+                    });
                 }
             }
         }
@@ -147,19 +155,118 @@ namespace InsuranceGenerator.Controllers
             }
             else
             {
-                return View("Success");
+                using (InsuranceEntities db = new InsuranceEntities())
+                {
+                    var Users = db.Users;
+                    var FoundUsers = Users.Where(x => x.Email == lookupEmail).ToList();
+                    if (FoundUsers.Count() < 1)
+                    {
+                        return View("NoAccountError");
+                    }
+                    else
+                    {
+                        var userInfo = new LookupViewModel();
+
+                        User user = FoundUsers.FirstOrDefault();
+
+                        var cars = from c in db.Cars
+                                   where c.UserId == user.Id
+                                   select c;
+
+                        var listCars = new List<CarViewModel>();
+
+                        foreach (Car car in cars)
+                        {
+                            var tempcar = new CarViewModel();
+                            tempcar.Make = car.Make;
+                            tempcar.Model = car.Model;
+                            tempcar.Year = car.Year;
+                            tempcar.Rate = db.Quotes.Where(x => x.Id == car.QuoteId).ToList().FirstOrDefault().Rate;
+                            tempcar.IssueDate = db.Quotes.Where(x => x.Id == car.QuoteId).ToList().FirstOrDefault().IssueDate;
+                            listCars.Add(tempcar);
+                        }
+
+                        //Calculate Points
+                        var Tickets = db.Tickets;
+                        var userTickets = db.Tickets.Where(x => x.UserId == user.Id).ToList();
+                        int points = userTickets.Count(x => (DateTime.Now - x.IssueDate).Days <= 1095);
+
+                        userInfo.FirstName = user.FirstName;
+                        userInfo.LastName = user.LastName;
+                        userInfo.UserEmail = user.Email;
+                        userInfo.NumCars = cars.Count();
+                        userInfo.Points = points;
+                        userInfo.Dui = (user.DuiActive == 1) ? true : false;
+                        userInfo.TotalRate = user.CompleteQuote;
+                        userInfo.Cars = listCars;
+
+                        return View(userInfo);
+                    }
+                }
             }
         }
 
-        private decimal CalcCarQuote(User user, Car car, string coverage)
+        private decimal CalcCarQuote(User user, Car car, int points, string coverage)
         {
             double rate = 50.00;
-            //calc age again
-            //put calc points lines here
-            //convert coverage
-            
+            //calc age
+            var daysalive = DateTime.Now - user.DateOfBirth;
+            int age = daysalive.Days / 365;
+            //tack on for certain age ranges
+            if (age < 18) rate += 100.00;
+            else if ((age < 25) || (age > 100)) rate += 25.00;
+            //tack on for certain car years
+            if ((car.Year < 2000) || (car.Year > 2015)) rate += 25.00;
+            //tack on for certain models and makes
+            if (car.Make == "porsche")
+            {
+                rate += 25.00;
+                if (car.Model == "911 carrera") rate += 25.00;
+            }
+            //adjust for points on record
+            rate += (points * 10.00);
+            //adjust if dui on record
+            if (user.DuiActive == 1) rate *= 1.25;
+            //adjust if full coverage type
+            if (coverage == "0") rate *= 1.50;
+
             return Convert.ToDecimal(rate);
         }
 
+        private void AddQuoteAndCar(User user, string make, string model, int year, string coverage)
+        {
+            using (InsuranceEntities db = new InsuranceEntities())
+            {
+                //create car object
+                var tempCar = new Car();
+                tempCar.Make = make.ToLower();
+                tempCar.Model = model.ToLower();
+                tempCar.Year = year;
+
+                //Calculate Points
+                var Tickets = db.Tickets;
+                var userTickets = db.Tickets.Where(x => x.UserId == user.Id).ToList();
+                int points = userTickets.Count(x => (DateTime.Now - x.IssueDate).Days <= 1095);
+
+                //find rate on car
+                decimal rate = CalcCarQuote(user, tempCar, points, coverage);
+
+                //create quote object and add to db
+                var tempQuote = new Quote();
+                tempQuote.Rate = rate;
+                tempQuote.CoverageType = coverage;
+                tempQuote.IssueDate = DateTime.Now;
+
+                db.Quotes.Add(tempQuote);
+                db.SaveChanges();
+
+                //add foreign keys to car object and save car to db
+                tempCar.UserId = user.Id;
+                tempCar.QuoteId = tempQuote.Id;
+
+                db.Cars.Add(tempCar);
+                db.SaveChanges();
+            }
+        }
     }
 }

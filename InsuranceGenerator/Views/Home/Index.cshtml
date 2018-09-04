@@ -165,63 +165,66 @@
     </div>
 </div>
 
+<div>
+    @Html.ActionLink("Admin View", "Index", "Admin")
+</div>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $("select[name='duiToggle']").on('change', function () {
-                    if ($(this).val() == 1) {
-                        $("input[name='dui']").prop("disabled", false);
-                    } else {
-                        $("input[name='dui']").prop("disabled", true);
-                    }
-                });
-            });
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("select[name='duiToggle']").on('change', function () {
+            if ($(this).val() === "1") {
+                $("input[name='dui']").prop("disabled", false);
+            } else {
+                $("input[name='dui']").prop("disabled", true);
+            }
+        });
+    });
 
-            $(document).ready(function () {
-                $("select[name='ticketToggle']").on('change', function () {
-                    if ($(this).val() == 1) {
-                        $("input[name='ticket1']").prop("disabled", false);
-                        $("input[name='ticket2']").prop("disabled", true);
-                        $("input[name='ticket3']").prop("disabled", true);
-                        $("input[name='ticket4']").prop("disabled", true);
-                        $("input[name='ticket5']").prop("disabled", true);
-                    }
-                    else if ($(this).val() == 2) {
-                        $("input[name='ticket1']").prop("disabled", false);
-                        $("input[name='ticket2']").prop("disabled", false);
-                        $("input[name='ticket3']").prop("disabled", true);
-                        $("input[name='ticket4']").prop("disabled", true);
-                        $("input[name='ticket5']").prop("disabled", true);
-                    }
-                    else if ($(this).val() == 3) {
-                        $("input[name='ticket1']").prop("disabled", false);
-                        $("input[name='ticket2']").prop("disabled", false);
-                        $("input[name='ticket3']").prop("disabled", false);
-                        $("input[name='ticket4']").prop("disabled", true);
-                        $("input[name='ticket5']").prop("disabled", true);
-                    }
-                    else if ($(this).val() == 4) {
-                        $("input[name='ticket1']").prop("disabled", false);
-                        $("input[name='ticket2']").prop("disabled", false);
-                        $("input[name='ticket3']").prop("disabled", false);
-                        $("input[name='ticket4']").prop("disabled", false);
-                        $("input[name='ticket5']").prop("disabled", true);
-                    }
-                    else if ($(this).val() == 5) {
-                        $("input[name='ticket1']").prop("disabled", false);
-                        $("input[name='ticket2']").prop("disabled", false);
-                        $("input[name='ticket3']").prop("disabled", false);
-                        $("input[name='ticket4']").prop("disabled", false);
-                        $("input[name='ticket5']").prop("disabled", false);
-                    } else {
-                        $("input[name='ticket1']").prop("disabled", true);
-                        $("input[name='ticket2']").prop("disabled", true);
-                        $("input[name='ticket3']").prop("disabled", true);
-                        $("input[name='ticket4']").prop("disabled", true);
-                        $("input[name='ticket5']").prop("disabled", true);
-                    }
-                });
-            });
+    $(document).ready(function () {
+        $("select[name='ticketToggle']").on('change', function () {
+            if ($(this).val() === "1") {
+                $("input[name='ticket1']").prop("disabled", false);
+                $("input[name='ticket2']").prop("disabled", true);
+                $("input[name='ticket3']").prop("disabled", true);
+                $("input[name='ticket4']").prop("disabled", true);
+                $("input[name='ticket5']").prop("disabled", true);
+            }
+            else if ($(this).val() === "2") {
+                $("input[name='ticket1']").prop("disabled", false);
+                $("input[name='ticket2']").prop("disabled", false);
+                $("input[name='ticket3']").prop("disabled", true);
+                $("input[name='ticket4']").prop("disabled", true);
+                $("input[name='ticket5']").prop("disabled", true);
+            }
+            else if ($(this).val() === "3") {
+                $("input[name='ticket1']").prop("disabled", false);
+                $("input[name='ticket2']").prop("disabled", false);
+                $("input[name='ticket3']").prop("disabled", false);
+                $("input[name='ticket4']").prop("disabled", true);
+                $("input[name='ticket5']").prop("disabled", true);
+            }
+            else if ($(this).val() === "4") {
+                $("input[name='ticket1']").prop("disabled", false);
+                $("input[name='ticket2']").prop("disabled", false);
+                $("input[name='ticket3']").prop("disabled", false);
+                $("input[name='ticket4']").prop("disabled", false);
+                $("input[name='ticket5']").prop("disabled", true);
+            }
+            else if ($(this).val() === "5") {
+                $("input[name='ticket1']").prop("disabled", false);
+                $("input[name='ticket2']").prop("disabled", false);
+                $("input[name='ticket3']").prop("disabled", false);
+                $("input[name='ticket4']").prop("disabled", false);
+                $("input[name='ticket5']").prop("disabled", false);
+            } else {
+                $("input[name='ticket1']").prop("disabled", true);
+                $("input[name='ticket2']").prop("disabled", true);
+                $("input[name='ticket3']").prop("disabled", true);
+                $("input[name='ticket4']").prop("disabled", true);
+                $("input[name='ticket5']").prop("disabled", true);
+            }
+        });
+    });
 
-        </script>
+</script>

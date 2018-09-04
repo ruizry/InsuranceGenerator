@@ -7,11 +7,11 @@
     <Property Name="Id" Type="Int32" Nullable="false" />
     <Property Name="Make" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
     <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="Year" Type="DateTime" Precision="3" />
     <Property Name="UserId" Type="Int32" Nullable="false" />
     <Property Name="QuoteId" Type="Int32" Nullable="false" />
     <NavigationProperty Name="Quote" Relationship="Self.FK_Cars_Quotes" FromRole="Cars" ToRole="Quotes" />
     <NavigationProperty Name="User" Relationship="Self.FK_Cars_Users" FromRole="Cars" ToRole="Users" />
+    <Property Name="Year" Type="Int32" Nullable="false" />
   </EntityType>
   <EntityType Name="Quote">
     <Key>
@@ -44,6 +44,8 @@
     <Property Name="DuiIssued" Type="DateTime" Precision="3" />
     <NavigationProperty Name="Cars" Relationship="Self.FK_Cars_Users" FromRole="Users" ToRole="Cars" />
     <NavigationProperty Name="Tickets" Relationship="Self.FK_Tickets_Users" FromRole="Users" ToRole="Tickets" />
+    <Property Name="DuiActive" Type="Int32" Nullable="false" />
+    <Property Name="CompleteQuote" Type="Decimal" Precision="18" Scale="2" />
   </EntityType>
   <Association Name="FK_Cars_Quotes">
     <End Role="Quotes" Type="Self.Quote" Multiplicity="1">
